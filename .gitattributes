@@ -1,0 +1,2 @@
+game_script_jeff/* !filter !diff !merge text
+*.apk filter=lfs diff=lfs merge=lfs -text
