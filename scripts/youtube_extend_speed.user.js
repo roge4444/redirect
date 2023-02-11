@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         youtube_extend_speed
 // @namespace    EsfB3XVPmbThEv39bdxQR2hzid30iMF9
-// @version      1.0
+// @version      1.0.1
 // @description  youtube播放视频倍速自定义，刷新浏览器也不会丢失之前设置的速度
 // @author       Roger Chu
 // @include      http*://*youtube.com/*
