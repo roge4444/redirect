@@ -31,7 +31,7 @@
     videoSpeedElement = document.createElement("div");
     videoSpeedElement.setAttribute("id", "video_speed_div");
 
-    let speedArr = [0.5, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4];
+    let speedArr = [0.5, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.5, 4, 4.5, 5, 6, 8, 10];
 
     for (let i = 0; i < speedArr.length; i++) {
       let speed = speedArr[i];
