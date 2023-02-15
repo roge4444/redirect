@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         youtube_extend_speed
 // @namespace    EsfB3XVPmbThEv39bdxQR2hzid30iMF9
-// @version      1.0.1
+// @version      1.0.2
 // @description  youtube播放视频倍速自定义，刷新浏览器也不会丢失之前设置的速度
 // @author       Roger Chu
 // @include      http*://*youtube.com/*
@@ -13,7 +13,8 @@
 
   let videoSpeedElement;
 
-  setInterval(function () {
+  const intervalID = setInterval(function () {
+    console.log("Waiting for init...");
     if (location.href.indexOf("short") > -1 || location.href.indexOf("channel") > -1) return;
     if (document.querySelector("#above-the-fold") && document.getElementById("video_speed_div") === null) {
       addSpeedBtn();
@@ -70,6 +71,7 @@
       }
     }
     document.getElementById("third_video_plugin_btn_" + third_video_plugin_speed).click();
+    clearInterval(intervalID);
   }
 
   function setPlaybackRate(speed) {
