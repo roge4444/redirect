@@ -23,234 +23,337 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
-    html,body{height:100%;margin:0;padding:0;overflow:hidden;}
-    body{display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,var(--bg-dark),#071022);color:var(--text-dark);transition:background 0.3s;}
+    html,body{margin:0;padding:0}
+    /* 外層以 flex 置中，但實際內容以 .card-wrapper 控制靠上顯示，避免 iframe 在重新整理時下方跑位 */
+    body{display:flex;align-items:center;justify-content:center;padding:28px;background:linear-gradient(160deg,var(--bg-dark),#071022);color:var(--text-dark); min-height:100vh;box-sizing:border-box;}
 
     @media (prefers-color-scheme: light){
-      body{background:linear-gradient(160deg,var(--bg-light),#e9f2fb);color:var(--text-light);}
+      body{background:linear-gradient(160deg,var(--bg-light),#e9f2fb);color:var(--text-light)}
     }
 
+    /* 新增 wrapper 以利 iframe 內部定位與高度控制 */
+    .card-wrapper{
+      width:100%;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start; /* 靠上，避免 reload 時往下跑 */
+      overflow:visible;
+      box-sizing:border-box;
+      padding:0;
+    }
+
+    /* 使用你喜歡的樣式，但改為寬度100%並增加 max-width；同時將左欄設 min 寬度，確保寬螢幕不會壓縮內容 */
     .card{
-      width:980px;max-width:100%;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter: blur(6px);
-      border-radius:var(--glass-radius);padding:20px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 10px 30px rgba(2,6,23,0.45);
-      display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;box-sizing:border-box;
+      width:100%;
+      max-width:1200px; /* 可改為 1100 / 1300 視需求 */
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(6px);
+      border-radius:var(--glass-radius);
+      padding:20px;
+      border:1px solid rgba(255,255,255,0.04);
+      box-shadow:0 10px 30px rgba(2,6,23,0.45);
+      display:grid;
+      /* 左欄至少 640px，右欄固定 360px（同你原設計）*/
+      grid-template-columns: minmax(640px, 1fr) 360px;
+      gap:18px;
+      align-items:start;
+      box-sizing:border-box;
     }
-    @media (max-width:880px){.card{grid-template-columns:1fr;padding:16px;}}
+    @media (max-width:980px){
+      /* 改為單欄顯示（手機/窄視窗） */
+      .card{ grid-template-columns:1fr; padding:16px; }
+    }
 
-    .left h1{font-size:22px;margin:4px 0;}
+    .left h1{font-size:22px;margin:4px 0}
     .left p{margin:6px 0 16px 0;color:var(--muted-dark);}
-    @media (prefers-color-scheme: light){.left p{color:var(--muted-light);}}
+    @media (prefers-color-scheme: light){.left p{color:var(--muted-light)}}
 
-    .controls{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
-    .controls input[type=date], .controls input[type=number]{appearance:none;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;min-width:120px;}
+    .controls{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+    .controls input[type=date]{appearance:none;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;min-width:160px}
+    .controls input[type=number]{appearance:none;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;min-width:100px}
 
-    .stats{display:flex;gap:12px;flex-wrap:wrap;}
-    .stat{flex:1;min-width:120px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);}
-    .stat .num{font-size:18px;font-weight:800;}
-    .stat .label{color:var(--muted-dark);font-size:12px;margin-top:6px;}
-    @media (prefers-color-scheme: light){.stat{border-color:rgba(10,20,40,0.04)}.stat .label{color:var(--muted-light);}}
+    .stats{display:flex;gap:12px;flex-wrap:wrap}
+    .stat{flex:1;min-width:120px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+    .stat .num{font-size:18px;font-weight:800}
+    .stat .label{color:var(--muted-dark);font-size:12px;margin-top:6px}
+    @media (prefers-color-scheme: light){.stat{border-color:rgba(10,20,40,0.04)}.stat .label{color:var(--muted-light)}}
 
-    .progress-wrap{margin-top:12px;}
-    .progress-label{display:flex;justify-content:space-between;align-items:center;}
-    .progress-label .perc{font-weight:800;font-size:18px;}
+    .progress-wrap{margin-top:12px}
+    .progress-label{display:flex;justify-content:space-between;align-items:center}
+    .progress-label .perc{font-weight:800;font-size:18px}
 
-    .bar{margin-top:8px;height:18px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));overflow:hidden;border:1px solid rgba(255,255,255,0.02);}
-    .bar > .fill{height:100%;width:0%;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 6px 18px rgba(124,92,255,0.18);transition:width 0.9s cubic-bezier(.2,.9,.3,1);}
+    .bar{margin-top:8px;height:18px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+    .bar > .fill{height:100%;width:0%;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 6px 18px rgba(124,92,255,0.18)}
 
-    .right{display:flex;flex-direction:column;gap:12px;align-items:center;}
-    .circle{width:200px;height:200px;border-radius:999px;display:flex;align-items:center;justify-content:center;position:relative;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));}
-    .circle svg{position:absolute;left:0;top:0;}
-    .circle .center{z-index:2;text-align:center;}
-    .center .big{font-size:26px;font-weight:800;}
-    .center .sub{color:var(--muted-dark);font-size:13px;transition:color 0.3s;}
-    @media (prefers-color-scheme: light){.circle{border-color:rgba(10,20,40,0.04)}.center .sub{color:var(--muted-light);}}
+    .right{display:flex;flex-direction:column;gap:12px;align-items:center}
+    .circle{width:200px;height:200px;border-radius:999px;display:flex;align-items:center;justify-content:center;position:relative;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02))}
+    .circle svg{position:absolute;left:0;top:0}
+    .circle .center{z-index:2;text-align:center}
+    .center .big{font-size:26px;font-weight:800}
+    .center .sub{color:var(--muted-dark);font-size:13px}
+    @media (prefers-color-scheme: light){.circle{border-color:rgba(10,20,40,0.04)}.center .sub{color:var(--muted-light)}}
 
-    .footer-actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;}
-    .btn-ghost{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;cursor:pointer;}
+    .footer-actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+    .btn-ghost{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;cursor:pointer}
 
-    .flash{animation:flashColor 0.8s ease-in-out;}
-    @keyframes flashColor{
-      0%,100%{color:var(--muted-dark);}
-      50%{color:var(--accent2);}
+    .note{font-size:12px;color:var(--muted-dark);margin-top:8px}
+    @media (prefers-color-scheme: light){.note{color:var(--muted-light)}}
+
+    .flash{
+      animation: flash 800ms ease-in-out 2;
+    }
+    @keyframes flash{
+      0%,100%{color:inherit}
+      50%{color:var(--accent2)}
     }
   </style>
 </head>
 <body>
-  <div class="card" id="app">
-    <div class="left">
-      <h1>修行剩餘天數試算 — 目標年齡【<span id="dynamicAgeTitle"></span>】</h1>
-      <p>可動態調整出生日期與目標年齡，可使用"複製分享連結"</p>
+  <div class="card-wrapper">
+    <div class="card" id="app">
+      <div class="left">
+        <h1>修行剩餘天數試算 — 目標年齡【<span class="dynamicAge" data-target="dynamicAgeTitle"></span>】</h1>
+        <p>可動態調整出生日期與目標年齡，可使用"複製分享連結"</p>
 
-      <div class="controls">
-        <input id="birthdate" type="date" aria-label="出生日期" />
-        <input id="targetAge" type="number" min="1" max="200" placeholder="目標年齡（例如 60）" aria-label="目標年齡" />
-        <button id="copyBtn" class="btn-ghost">複製分享連結</button>
-      </div>
-
-      <div class="stats" id="stats">
-        <div class="stat">
-          <div class="num" id="currentAge">--</div>
-          <div class="label">目前年齡（歲）</div>
+        <div class="controls">
+          <input id="birthdate" type="date" aria-label="出生日期" />
+          <input id="targetAge" type="number" min="1" max="200" placeholder="目標年齡（例如 60）" aria-label="目標年齡" />
+          <button id="copyBtn" class="btn-ghost">複製分享連結</button>
         </div>
-        <div class="stat">
-          <div class="num" id="daysLived">--</div>
-          <div class="label">人生已過天數</div>
-        </div>
-        <div class="stat">
-          <div class="num" id="daysLeft">--</div>
-          <div class="label">修行剩餘天數（到 <span id="dynamicAgeTitle_3"></span>）</div>
-        </div>
-      </div>
 
-      <div class="progress-wrap">
-        <div class="progress-label"><div>人生進度百分比（到 <span id="dynamicAgeTitle_2"></span>）</div><div class="perc" id="percText">--%</div></div>
-        <div class="bar"><div class="fill" id="barFill"></div></div>
-      </div>
-    </div>
+        <div class="stats" id="stats">
+          <div class="stat">
+            <div class="num" id="currentAge">--</div>
+            <div class="label">目前年齡（歲）</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="daysLived">--</div>
+            <div class="label">人生已過天數</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="daysLeft">--</div>
+            <div class="label">修行剩餘天數（到 <span class="dynamicAge" data-target="dynamicAgeTitle_3"></span>）</div>
+          </div>
+        </div>
 
-    <div class="right">
-      <div class="circle" role="img" aria-label="人生進度圓形顯示">
-        <svg width="200" height="200" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="g1" x1="0" x2="1">
-              <stop offset="0%" stop-color="var(--accent1)" />
-              <stop offset="100%" stop-color="var(--accent2)" />
-            </linearGradient>
-          </defs>
-          <circle cx="110" cy="110" r="96" stroke="rgba(255,255,255,0.04)" stroke-width="12" fill="none" />
-          <circle id="arc" cx="110" cy="110" r="96" stroke="url(#g1)" stroke-width="12" stroke-linecap="round" fill="none" transform="rotate(-90 110 110)" stroke-dasharray="603.19" stroke-dashoffset="603.19" />
-        </svg>
-        <div class="center">
-          <div class="big" id="percBig">--%</div>
-          <div class="sub" id="ageSub">到目標歲數還有 -- 天</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><div>人生進度百分比（到 <span class="dynamicAge" data-target="dynamicAgeTitle_2"></span>）</div><div class="perc" id="percText">--%</div></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
         </div>
       </div>
 
-      <div class="footer-actions">
-        <button id="resetBtn" class="btn-ghost">重置</button>
+      <div class="right">
+        <div class="circle" role="img" aria-label="人生進度圓形顯示">
+          <svg width="200" height="200" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0%" stop-color="var(--accent1)" />
+                <stop offset="100%" stop-color="var(--accent2)" />
+              </linearGradient>
+            </defs>
+            <circle cx="110" cy="110" r="96" stroke="rgba(255,255,255,0.04)" stroke-width="12" fill="none" />
+            <circle id="arc" cx="110" cy="110" r="96" stroke="url(#g1)" stroke-width="12" stroke-linecap="round" fill="none" transform="rotate(-90 110 110)" stroke-dasharray="603.19" stroke-dashoffset="603.19" />
+          </svg>
+          <div class="center">
+            <div class="big" id="percBig">--%</div>
+            <div class="sub" id="ageSub">到目標歲數還有 -- 天</div>
+          </div>
+        </div>
+
+        <div class="footer-actions">
+          <button id="resetBtn" class="btn-ghost">重置</button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const qs = s=>document.querySelector(s);
-    const daysBetween=(a,b)=>Math.floor((b-a)/(1000*60*60*24));
-    function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
-    function parseQuery(){const u=new URL(location.href);return {b:u.searchParams.get('b'),age:u.searchParams.get('age')};}
-    function getTargetAge(){const el=qs('#targetAge');if(!el)return 60;const v=parseInt(el.value,10);if(!v||v<=0)return 60;return Math.min(200,Math.max(1,v));}
+    /* -- helpers -- */
+    const qs = s => document.querySelector(s);
+    const qsa = s => document.querySelectorAll(s);
+    const daysBetween = (a,b) => Math.floor((b - a) / (1000*60*60*24));
+    const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+    function parseQuery(){ const u = new URL(location.href); return { b: u.searchParams.get('b'), age: u.searchParams.get('age') }; }
+    function getTargetAge(){ const el = qs('#targetAge'); if(!el) return 60; const v = parseInt(el.value,10); return (v>0)?Math.min(200,v):60; }
+
     function compute(birthDate){
-      const now=new Date();
-      const birth=new Date(birthDate.getFullYear(),birthDate.getMonth(),birthDate.getDate());
-      const targetAge=getTargetAge();
-      const end=new Date(birth.getFullYear()+targetAge,birth.getMonth(),birth.getDate());
-      const totalDays=Math.max(1,daysBetween(birth,end));
-      const livedDays=daysBetween(birth,now);
-      const leftDays=daysBetween(now,end);
-      const ageYears=(now-birth)/(1000*60*60*24*365.2425);
-      const usedPercent=clamp((livedDays/totalDays)*100,0,100);
-      return {totalDays,livedDays:Math.max(0,livedDays),leftDays:Math.max(0,leftDays),ageYears,usedPercent,end,targetAge};
+      const now = new Date();
+      const birth = new Date(birthDate.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+      const targetAge = getTargetAge();
+      const end = new Date(birth.getFullYear() + targetAge, birth.getMonth(), birth.getDate());
+      const totalDays = Math.max(1, daysBetween(birth, end));
+      const livedDays = daysBetween(birth, now);
+      const leftDays = daysBetween(now, end);
+      const ageYears = (now - birth) / (1000*60*60*24*365.2425);
+      const usedPercent = clamp((livedDays / totalDays) * 100, 0, 100);
+      return { totalDays, livedDays: Math.max(0, livedDays), leftDays: Math.max(0, leftDays), ageYears, usedPercent, end, targetAge };
     }
 
-    function animateValue(el,start,end,duration,callback,formatter){
-      let startTime=null;
+    /* animate numeric value with formatter callback */
+    function animateNumber(el, start, end, duration, onEnd, formatFn){
+      const startTime = performance.now();
       function tick(now){
-        if(!startTime) startTime=now;
-        const t=Math.min(1,(now-startTime)/duration);
-        const eased=1-Math.pow(1-t,3);
-        const val=start + (end-start)*eased;
-        el.textContent=formatter?formatter(val):val.toLocaleString();
-        if(t<1) requestAnimationFrame(tick);
-        else if(callback) callback();
+        const t = Math.min(1, (now - startTime) / duration);
+        const v = start + (end - start) * easeOutCubic(t);
+        el.textContent = formatFn ? formatFn(v) : Math.round(v);
+        if(t < 1) requestAnimationFrame(tick);
+        else if(onEnd) onEnd();
       }
       requestAnimationFrame(tick);
     }
 
-    function animateTo(percent,leftDays,targetAge){
-      const fill=qs('#barFill');
-      const arc=qs('#arc');
-      const percText=qs('#percText');
-      const percBig=qs('#percBig');
-      const ageSub=qs('#ageSub');
-      const p=clamp(percent,0,100);
+    /* main animate: always animate from 0 -> percent (so it won't jump) */
+    function animateTo(percent, leftDays, targetAge){
+      const fill = qs('#barFill');
+      const arc = qs('#arc');
+      const percText = qs('#percText');
+      const percBig = qs('#percBig');
+      const ageSub = qs('#ageSub');
+      const p = clamp(percent, 0, 100);
 
-      const circumference=2*Math.PI*96;
-      const offset=circumference*(1-p/100);
-      if(arc) arc.setAttribute('stroke-dashoffset',circumference);
+      const circumference = 2 * Math.PI * 96;
+      const targetOffset = circumference * (1 - p/100);
+      const duration = 900; // ms
 
-      let startTime=null;
+      // animate with requestAnimationFrame from 0
+      const startTime = performance.now();
       function tick(now){
-        if(!startTime) startTime=now;
-        const t=Math.min(1,(now-startTime)/1000);
-        const eased=1-Math.pow(1-t,3);
-        if(arc) arc.setAttribute('stroke-dashoffset',circumference + (offset-circumference)*eased);
-        if(fill) fill.style.width=(p*eased)+'%';
-        if(percBig) percBig.textContent=Math.round(p*eased*100)/100 + '%';
-        if(percText) percText.textContent=Math.round(p*eased*100)/100 + '%';
-        if(t<1) requestAnimationFrame(tick);
+        const t = Math.min(1, (now - startTime) / duration);
+        const eased = easeOutCubic(t);
+        const offset = circumference + (targetOffset - circumference) * eased; // start at circumference (0%)
+        if(arc) arc.setAttribute('stroke-dashoffset', offset);
+        if(fill) fill.style.width = (p * eased) + '%';
+        const displayPerc = Math.round((p * eased) * 100) / 100;
+        if(percBig) percBig.textContent = displayPerc + '%';
+        if(percText) percText.textContent = displayPerc + '%';
+        if(t < 1) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
 
-      animateValue(ageSub,0,leftDays,1000, ()=>{
+      // days text animate from current numeric value (or 0) -> leftDays, formatted with thousands separator
+      // get current numeric value in ageSub to start from (strip non-digits)
+      let current = 0;
+      const m = ageSub.textContent.match(/([\d,]+)/);
+      if(m) current = parseInt(m[1].replace(/,/g,''),10) || 0;
+      animateNumber(ageSub, current, leftDays, duration, ()=>{
+        // flash after complete
         ageSub.classList.add('flash');
-        setTimeout(()=>ageSub.classList.remove('flash'),800);
-      }, val=>`到 ${targetAge} 歲還有 ${Math.round(val).toLocaleString()} 天`);
+        setTimeout(()=>ageSub.classList.remove('flash'), 800);
+      }, v => leftDays > 0 ? `到 ${targetAge} 歲還有 ${Math.round(v).toLocaleString()} 天` : `已超過 ${targetAge} 歲`);
+    }
+
+    function updateDynamicAgeTitles(targetAge){
+      qsa('.dynamicAge').forEach(el=>{
+        const target = el.dataset.target;
+        if(target) el.textContent = targetAge + ' 歲';
+      });
     }
 
     function updateUIFromBirth(d){
-      const out=compute(d);
-      qs('#currentAge').textContent=Math.floor(out.ageYears)+' 歲';
-      qs('#daysLived').textContent=out.livedDays.toLocaleString()+' 天';
-      qs('#daysLeft').textContent=out.leftDays.toLocaleString()+' 天';
+      const out = compute(d);
+      qs('#currentAge').textContent = Math.floor(out.ageYears) + ' 歲';
+      qs('#daysLived').textContent = out.livedDays.toLocaleString() + ' 天';
+      qs('#daysLeft').textContent = out.leftDays.toLocaleString() + ' 天';
+      updateDynamicAgeTitles(out.targetAge);
+      // set ageSub initial text (so animateNumber has a stable starting parse)
+      const ageSub = qs('#ageSub');
+      ageSub.textContent = out.leftDays > 0 ? `到 ${out.targetAge} 歲還有 ${out.leftDays.toLocaleString()} 天` : `已超過 ${out.targetAge} 歲`;
+      // Immediately set to '0' state before animation so it animates from 0 -> value
+      // but we want visible 0% start:
+      qs('#percBig').textContent = '0%';
+      qs('#percText').textContent = '0%';
+      if(qs('#barFill')) qs('#barFill').style.width = '0%';
+      if(qs('#arc')) qs('#arc').setAttribute('stroke-dashoffset', 2 * Math.PI * 96);
 
-      [qs('#dynamicAgeTitle'),qs('#dynamicAgeTitle_2'),qs('#dynamicAgeTitle_3')].forEach(el=>{
-        if(el) el.textContent=out.targetAge+' 歲';
-      });
+      // small timeout to allow DOM paint -> then animate
+      setTimeout(()=> animateTo(out.usedPercent, out.leftDays, out.targetAge), 30);
 
-      animateTo(out.usedPercent,out.leftDays,out.targetAge);
-      // 調整 body 高度給 HackMD iframe
-      document.body.style.height=document.querySelector('.card').offsetHeight+'px';
+      // update iframe/body height
+      scheduleUpdateHeight();
     }
 
-    function debounce(fn,delay){let timer;return function(...args){clearTimeout(timer);timer=setTimeout(()=>fn.apply(this,args),delay);};}
+    function debounce(fn, delay){
+      let timer;
+      return function(...args){
+        clearTimeout(timer);
+        timer = setTimeout(()=> fn.apply(this, args), delay);
+      }
+    }
 
-    document.addEventListener('DOMContentLoaded',()=>{
-      const dateInput=qs('#birthdate');
-      const targetAgeInput=qs('#targetAge');
-      const copyBtn=qs('#copyBtn');
-      const resetBtn=qs('#resetBtn');
+    /* Height sync for iframe: set body height and observe layout changes */
+    function setBodyHeightToContent(){
+      const wrapper = document.querySelector('.card-wrapper');
+      if(!wrapper) return;
+      const h = wrapper.offsetHeight + 40; // add some padding
+      document.body.style.height = h + 'px';
+      document.documentElement.style.height = h + 'px';
+    }
+    // schedule with rAF to avoid repeated layout thrashing
+    let scheduleTimer = null;
+    function scheduleUpdateHeight(){
+      if(scheduleTimer) cancelAnimationFrame(scheduleTimer);
+      scheduleTimer = requestAnimationFrame(()=>{ setBodyHeightToContent(); scheduleTimer = null; });
+    }
 
-      const q=parseQuery();
-      if(q.b){const d=new Date(q.b);if(!isNaN(d)) dateInput.value=d.toISOString().slice(0,10);}
-      if(q.age && targetAgeInput){const av=parseInt(q.age,10);if(!isNaN(av)) targetAgeInput.value=av;}
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const dateInput = qs('#birthdate');
+      const targetAgeInput = qs('#targetAge');
+      const copyBtn = qs('#copyBtn');
+      const resetBtn = qs('#resetBtn');
 
-      if(!dateInput.value) dateInput.value='1996-03-02';
-      if(targetAgeInput && !targetAgeInput.value) targetAgeInput.value='60';
+      // load query params
+      const q = parseQuery();
+      if(q.b){ const d = new Date(q.b); if(!isNaN(d)) dateInput.value = d.toISOString().slice(0,10); }
+      if(q.age && targetAgeInput){ const av = parseInt(q.age,10); if(!isNaN(av)) targetAgeInput.value = av; }
 
-      const autoCompute=debounce(()=>{
-        const d=new Date(dateInput.value);
+      // sensible defaults
+      if(!dateInput.value) dateInput.value = '1996-03-02';
+      if(targetAgeInput && !targetAgeInput.value) targetAgeInput.value = '60';
+
+      const autoCompute = debounce(()=>{
+        const d = new Date(dateInput.value);
         if(!isNaN(d)) updateUIFromBirth(d);
-        const u=new URL(location.href);
-        if(dateInput.value) u.searchParams.set('b',dateInput.value);
-        if(targetAgeInput && targetAgeInput.value) u.searchParams.set('age',targetAgeInput.value);
-        history.replaceState({},'',u.toString());
-      },300);
+        // sync URL params as user types
+        const u = new URL(location.href);
+        if(dateInput.value) u.searchParams.set('b', dateInput.value);
+        if(targetAgeInput && targetAgeInput.value) u.searchParams.set('age', targetAgeInput.value);
+        history.replaceState({}, '', u.toString());
+      }, 300);
 
-      [dateInput,targetAgeInput].forEach(el=>{if(el) el.addEventListener('input',autoCompute);});
+      [dateInput, targetAgeInput].forEach(el => { if(el) el.addEventListener('input', autoCompute); });
 
+      // initial render
       updateUIFromBirth(new Date(dateInput.value));
 
-      copyBtn.addEventListener('click',async ()=>{
-        const u=new URL(location.href);
-        try{await navigator.clipboard.writeText(u.toString());copyBtn.textContent='已複製 ✓';setTimeout(()=>copyBtn.textContent='複製分享連結',1400);}
-        catch(e){prompt('無法直接複製，請手動複製以下連結：',u.toString());}
+      // copy link
+      copyBtn.addEventListener('click', async ()=>{
+        const u = new URL(location.href);
+        try{
+          await navigator.clipboard.writeText(u.toString());
+          copyBtn.textContent = '已複製 ✓';
+          setTimeout(()=>copyBtn.textContent = '複製分享連結', 1400);
+        }catch(e){
+          prompt('無法直接複製，請手動複製以下連結：', u.toString());
+        }
       });
 
-      resetBtn.addEventListener('click',()=>{
-        dateInput.value='1996-03-02';
-        if(targetAgeInput) targetAgeInput.value='60';
+      // reset
+      resetBtn.addEventListener('click', ()=>{
+        dateInput.value = '1996-03-02';
+        if(targetAgeInput) targetAgeInput.value = '60';
         updateUIFromBirth(new Date(dateInput.value));
-        history.replaceState({},'',location.pathname);
+        history.replaceState({}, '', location.pathname);
       });
+
+      // ResizeObserver: 當 card 大小改變時，回傳高度以利 iframe 自動撐開
+      const ro = new ResizeObserver(()=>{ scheduleUpdateHeight(); });
+      const wrapper = document.querySelector('.card-wrapper');
+      if(wrapper) ro.observe(wrapper);
+
+      // initial height sync (slightly delayed to allow fonts/images load)
+      setTimeout(()=>{ scheduleUpdateHeight(); }, 120);
     });
   </script>
 </body>
