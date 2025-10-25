@@ -54,7 +54,7 @@
       box-shadow:0 10px 30px rgba(2,6,23,0.45);
       display:grid;
       /* 左欄至少 640px，右欄固定 360px（同你原設計）*/
-      grid-template-columns: minmax(640px, 1fr) 360px;
+      grid-template-columns: minmax(640px, 1fr) 270px;
       gap:18px;
       align-items:start;
       box-sizing:border-box;
@@ -86,8 +86,21 @@
     .controls input[type=date]{appearance:none;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;min-width:160px}
     .controls input[type=number]{appearance:none;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;min-width:100px}
 
-    .stats{display:flex;gap:12px;flex-wrap:wrap}
-    .stat{flex:1;min-width:120px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+    .stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* 預設每個 stat 最多三個一行 */
+    .stat {
+      flex: 1 1 calc(29.2% - 12px);
+      min-width: 120px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
     .stat .num{font-size:18px;font-weight:800}
     .stat .label{color:var(--muted-dark);font-size:12px;margin-top:6px}
     @media (prefers-color-scheme: light){.stat{border-color:rgba(10,20,40,0.04)}.stat .label{color:var(--muted-light)}}
