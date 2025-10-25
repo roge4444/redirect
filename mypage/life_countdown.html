@@ -23,8 +23,8 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
-    html,body{height:100%;margin:0}
-    body{display:flex;align-items:center;justify-content:center;padding:28px;background:linear-gradient(160deg,var(--bg-dark),#071022);color:var(--text-dark)}
+    html,body{margin:0;padding:0}
+    body{display:flex;align-items:center;justify-content:center;padding:28px;background:linear-gradient(160deg,var(--bg-dark),#071022);color:var(--text-dark); min-height:100vh;}
 
     @media (prefers-color-scheme: light){
       body{background:linear-gradient(160deg,var(--bg-light),#e9f2fb);color:var(--text-light)}
@@ -56,7 +56,7 @@
     .progress-label .perc{font-weight:800;font-size:18px}
 
     .bar{margin-top:8px;height:18px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
-    .bar > .fill{height:100%;width:0%;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 6px 18px rgba(124,92,255,0.18);transition:width 0.8s cubic-bezier(.4,0,.2,1)}
+    .bar > .fill{height:100%;width:0%;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 6px 18px rgba(124,92,255,0.18)}
 
     .right{display:flex;flex-direction:column;gap:12px;align-items:center}
     .circle{width:200px;height:200px;border-radius:999px;display:flex;align-items:center;justify-content:center;position:relative;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02))}
@@ -69,18 +69,23 @@
     .footer-actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
     .btn-ghost{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;cursor:pointer}
 
-    /* 剩餘天數完成閃動動畫 */
-    @keyframes flashArc {
-      0%,100% { stroke-opacity: 1; }
-      50% { stroke-opacity: 0.6; }
+    .note{font-size:12px;color:var(--muted-dark);margin-top:8px}
+    @media (prefers-color-scheme: light){.note{color:var(--muted-light)}}
+
+    .flash{
+      animation: flash 800ms ease-in-out 2;
+    }
+    @keyframes flash{
+      0%,100%{color:inherit}
+      50%{color:var(--accent2)}
     }
   </style>
 </head>
 <body>
   <div class="card" id="app">
     <div class="left">
-      <h1>修行剩餘天數試算 — 目標年齡【<span id="dynamicAgeTitle"></span>】</h1>
-      <p>可動態調整出生日期與目標年齡，可使用"複製分享連結"</p>
+      <h1>修行剩餘天數試算 — 目標年齡【<span class="dynamicAge" data-target="dynamicAgeTitle"></span>】</h1>
+      <p>可以調整出生日期與目標年齡、可以複製分享連結。</p>
 
       <div class="controls">
         <input id="birthdate" type="date" aria-label="出生日期" />
@@ -99,12 +104,12 @@
         </div>
         <div class="stat">
           <div class="num" id="daysLeft">--</div>
-          <div class="label">修行剩餘天數（到 <span id="dynamicAgeTitle_3"></span>）</div>
+          <div class="label">修行剩餘天數（到 <span class="dynamicAge" data-target="dynamicAgeTitle_3"></span>）</div>
         </div>
       </div>
 
       <div class="progress-wrap">
-        <div class="progress-label"><div>人生進度百分比（到 <span id="dynamicAgeTitle_2"></span>）</div><div class="perc" id="percText">--%</div></div>
+        <div class="progress-label"><div>人生進度百分比（到 <span class="dynamicAge" data-target="dynamicAgeTitle_2"></span>）</div><div class="perc" id="percText">--%</div></div>
         <div class="bar"><div class="fill" id="barFill"></div></div>
       </div>
     </div>
@@ -134,119 +139,126 @@
   </div>
 
   <script>
-    const qs = s => document.querySelector(s);
-    const daysBetween = (a,b) => Math.floor((b - a) / (1000*60*60*24));
+    const qs = (s)=>document.querySelector(s);
+    const qsa = (s)=>document.querySelectorAll(s);
+    const daysBetween = (a,b)=>Math.floor((b-a)/(1000*60*60*24));
+    const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
 
-    function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
-    function parseQuery(){ const u = new URL(location.href); return { b: u.searchParams.get('b'), age: u.searchParams.get('age') }; }
-    function getTargetAge(){ const el = qs('#targetAge'); if(!el) return 60; const v = parseInt(el.value,10); if(!v||v<=0) return 60; return Math.min(200, Math.max(1, v)); }
+    function parseQuery(){ const u=new URL(location.href); return { b:u.searchParams.get('b'), age:u.searchParams.get('age') }; }
+    function getTargetAge(){ const el=qs('#targetAge'); if(!el) return 60; const v=parseInt(el.value,10); return (v>0)?Math.min(200,v):60; }
 
     function compute(birthDate){
-      const now = new Date();
-      const birth = new Date(birthDate.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-      const targetAge = getTargetAge();
-      const end = new Date(birth.getFullYear() + targetAge, birth.getMonth(), birth.getDate());
-      const totalDays = Math.max(1, daysBetween(birth, end));
-      const livedDays = daysBetween(birth, now);
-      const leftDays = daysBetween(now, end);
-      const ageYears = (now - birth) / (1000*60*60*24*365.2425);
-      const usedPercent = clamp((livedDays / totalDays) * 100, 0, 100);
-      return {totalDays, livedDays: Math.max(0,livedDays), leftDays: Math.max(0,leftDays), ageYears, usedPercent, end, targetAge}
+      const now=new Date();
+      const birth=new Date(birthDate.getFullYear(),birthDate.getMonth(),birthDate.getDate());
+      const targetAge=getTargetAge();
+      const end=new Date(birth.getFullYear()+targetAge,birth.getMonth(),birth.getDate());
+      const totalDays=Math.max(1,daysBetween(birth,end));
+      const livedDays=daysBetween(birth,now);
+      const leftDays=daysBetween(now,end);
+      const ageYears=(now-birth)/(1000*60*60*24*365.2425);
+      const usedPercent=clamp((livedDays/totalDays)*100,0,100);
+      return {totalDays,livedDays:Math.max(0,livedDays),leftDays:Math.max(0,leftDays),ageYears,usedPercent,end,targetAge};
     }
 
-    function animateTo(percent,leftDays){
-      const fill = qs('#barFill');
-      const arc = qs('#arc');
-      const percText = qs('#percText');
-      const percBig = qs('#percBig');
-      const ageSub = qs('#ageSub');
-      const p = clamp(percent,0,100);
-
-      if(fill) fill.style.width = p + '%';
-
-      const circumference = 2*Math.PI*96;
-      const startOffset = circumference;
-      const targetOffset = circumference*(1 - p/100);
-      const duration = 1000;
-      const startTime = performance.now();
-
-      function tick(t){
-        const dt = Math.min(1,(t-startTime)/duration);
-        const eased = dt<0.5?4*dt*dt*dt:1-Math.pow(-2*dt+2,3)/2;
-        const offset = startOffset + (targetOffset-startOffset)*eased;
-        if(arc) arc.setAttribute('stroke-dashoffset', offset);
-
-        const valPercent = p*eased;
-        const valDays = Math.round(leftDays*eased);
-        if(percText) percText.textContent = percBig.textContent = Math.round(valPercent*100)/100 + '%';
-        if(ageSub) ageSub.textContent = leftDays > 0
-          ? ('到 ' + getTargetAge() + ' 歲還有 ' + valDays.toLocaleString() + ' 天')
-          : ('已超過 ' + getTargetAge() + ' 歲');
-        if(dt<1) requestAnimationFrame(tick);
-        else{
-          // 動畫完成後閃動提示
-          if(arc){
-            arc.style.animation = 'flashArc 0.6s ease-in-out 2';
-            setTimeout(()=>{arc.style.animation='';},1200);
-          }
-        }
+    function animateValue(el, start, end, duration, callback, formatFn){
+      const startTime=performance.now();
+      function tick(now){
+        const t=Math.min(1,(now-startTime)/duration);
+        const eased=1-Math.pow(1-t,3);
+        const val=start+(end-start)*eased;
+        el.textContent=formatFn?formatFn(val):Math.round(val);
+        if(t<1) requestAnimationFrame(tick);
+        else if(callback) callback();
       }
       requestAnimationFrame(tick);
     }
 
-    function updateUIFromBirth(d){
-      const out = compute(d);
-      qs('#currentAge').textContent = Math.floor(out.ageYears) + ' 歲';
-      qs('#daysLived').textContent = out.livedDays.toLocaleString() + ' 天';
-      qs('#daysLeft').textContent = out.leftDays.toLocaleString()+ ' 天';
-      ['#dynamicAgeTitle','#dynamicAgeTitle_2','#dynamicAgeTitle_3'].forEach(id=>{
-        const el = qs(id);
-        if(el) el.textContent = out.targetAge + ' 歲';
+function animateTo(percent,leftDays,targetAge){
+  const fill=qs('#barFill');
+  const arc=qs('#arc');
+  const percText=qs('#percText');
+  const percBig=qs('#percBig');
+  const ageSub=qs('#ageSub');
+  const p=clamp(percent,0,100);
+
+  const circumference=2*Math.PI*96;
+  const offset=circumference*(1-p/100);
+
+  let startTime=null;
+  function tick(now){
+    if(!startTime) startTime=now;
+    const t=Math.min(1,(now-startTime)/1000); // 1秒動畫
+    const eased=1-Math.pow(1-t,3);
+    arc.setAttribute('stroke-dashoffset',circumference + (offset-circumference)*eased); // 從 0% -> p%
+    fill.style.width=(p*eased)+'%';
+    percBig.textContent=Math.round(p*eased*100)/100 + '%';
+    percText.textContent=Math.round(p*eased*100)/100 + '%';
+    if(t<1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  animateValue(ageSub,0,leftDays,1000, ()=>{
+    ageSub.classList.add('flash');
+    setTimeout(()=>ageSub.classList.remove('flash'),800);
+  }, val=>`到 ${targetAge} 歲還有 ${Math.round(val).toLocaleString()} 天`);
+}
+
+    function updateDynamicAgeTitles(targetAge){
+      qsa('.dynamicAge').forEach(el=>{
+        const target=el.dataset.target;
+        if(target){ el.textContent=targetAge+' 歲'; }
       });
-      animateTo(out.usedPercent,out.leftDays);
     }
 
-    function debounce(fn, delay){ let timer; return function(...args){ clearTimeout(timer); timer = setTimeout(()=>fn.apply(this,args), delay); } }
+    function updateUIFromBirth(d){
+      const out=compute(d);
+      qs('#currentAge').textContent=Math.floor(out.ageYears)+' 歲';
+      qs('#daysLived').textContent=out.livedDays.toLocaleString()+' 天';
+      qs('#daysLeft').textContent=out.leftDays.toLocaleString()+' 天';
+      updateDynamicAgeTitles(out.targetAge);
+      animateTo(out.usedPercent,out.leftDays,out.targetAge);
+    }
+
+    function debounce(fn,delay){ let timer; return function(...args){ clearTimeout(timer); timer=setTimeout(()=>fn.apply(this,args),delay); } }
 
     document.addEventListener('DOMContentLoaded',()=>{
-      const dateInput = qs('#birthdate');
-      const targetAgeInput = qs('#targetAge');
-      const copyBtn = qs('#copyBtn');
-      const resetBtn = qs('#resetBtn');
+      const dateInput=qs('#birthdate');
+      const targetAgeInput=qs('#targetAge');
+      const copyBtn=qs('#copyBtn');
+      const resetBtn=qs('#resetBtn');
 
-      const q = parseQuery();
-      if(q.b){ const d = new Date(q.b); if(!isNaN(d)) dateInput.value = d.toISOString().slice(0,10); }
-      if(q.age && targetAgeInput){ const av = parseInt(q.age,10); if(!isNaN(av)) targetAgeInput.value = av; }
+      const q=parseQuery();
+      if(q.b){ const d=new Date(q.b); if(!isNaN(d)) dateInput.value=d.toISOString().slice(0,10); }
+      if(q.age && targetAgeInput){ const av=parseInt(q.age,10); if(!isNaN(av)) targetAgeInput.value=av; }
 
-      if(!dateInput.value) dateInput.value = '1996-03-02';
-      if(targetAgeInput && !targetAgeInput.value) targetAgeInput.value = '60';
+      if(!dateInput.value) dateInput.value='1996-03-02';
+      if(targetAgeInput && !targetAgeInput.value) targetAgeInput.value='60';
 
-      const autoCompute = debounce(()=>{
-        const d = new Date(dateInput.value);
+      const autoCompute=debounce(()=>{
+        const d=new Date(dateInput.value);
         if(!isNaN(d)) updateUIFromBirth(d);
-        const u = new URL(location.href);
-        if(dateInput.value) u.searchParams.set('b', dateInput.value);
-        if(targetAgeInput && targetAgeInput.value) u.searchParams.set('age', targetAgeInput.value);
+        const u=new URL(location.href);
+        if(dateInput.value) u.searchParams.set('b',dateInput.value);
+        if(targetAgeInput && targetAgeInput.value) u.searchParams.set('age',targetAgeInput.value);
         history.replaceState({},'',u.toString());
       },300);
 
-      [dateInput,targetAgeInput].forEach(el=>{ if(el) el.addEventListener('input', autoCompute); });
+      [dateInput,targetAgeInput].forEach(el=>{ if(el) el.addEventListener('input',autoCompute); });
 
-      // 初次載入
       updateUIFromBirth(new Date(dateInput.value));
 
-      copyBtn.addEventListener('click', async ()=>{
-        const u = new URL(location.href);
+      copyBtn.addEventListener('click',async ()=>{
+        const u=new URL(location.href);
         try{
           await navigator.clipboard.writeText(u.toString());
-          copyBtn.textContent = '已複製 ✓';
+          copyBtn.textContent='已複製 ✓';
           setTimeout(()=>copyBtn.textContent='複製分享連結',1400);
-        }catch(e){ prompt('無法直接複製，請手動複製以下連結：', u.toString()); }
+        }catch(e){ prompt('無法直接複製，請手動複製以下連結：',u.toString()); }
       });
 
-      resetBtn.addEventListener('click', ()=>{
-        dateInput.value = '1996-03-02';
-        if(targetAgeInput) targetAgeInput.value = '60';
+      resetBtn.addEventListener('click',()=>{
+        dateInput.value='1996-03-02';
+        if(targetAgeInput) targetAgeInput.value='60';
         updateUIFromBirth(new Date(dateInput.value));
         history.replaceState({},'', location.pathname);
       });
