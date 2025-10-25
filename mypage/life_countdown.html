@@ -59,9 +59,23 @@
       align-items:start;
       box-sizing:border-box;
     }
-    @media (max-width:980px){
+    @media (max-width:1036px){
       /* 改為單欄顯示（手機/窄視窗） */
       .card{ grid-template-columns:1fr; padding:16px; }
+    }
+
+    /* 手機螢幕（小於 380px）減少邊距 */
+    @media (max-width:380px) {
+      body {
+        padding: 12px;
+      }
+    }
+
+    /* 更窄的螢幕可以再更小 */
+    @media (max-width:340px) {
+      body {
+        padding: 4px;
+      }
     }
 
     .left h1{font-size:22px;margin:4px 0}
