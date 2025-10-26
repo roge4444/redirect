@@ -27,7 +27,7 @@
     html,
     body {
       margin: 0;
-      padding: 0
+      padding: 0;
     }
 
     /* 外層以 flex 置中，但實際內容以 .card-wrapper 控制靠上顯示，避免 iframe 在重新整理時下方跑位 */
@@ -81,7 +81,6 @@
     }
 
     @media (max-width:1036px) {
-
       /* 改為單欄顯示（手機/窄視窗） */
       .card {
         grid-template-columns: 1fr;
@@ -89,15 +88,15 @@
       }
     }
 
-    /* 手機螢幕（小於 380px）減少邊距 */
-    @media (max-width:380px) {
+    /* 手機螢幕（小於 700px）減少邊距 */
+    @media (max-width:700px) {
       body {
         padding: 12px;
       }
     }
 
-    /* 更窄的螢幕可以再更小 */
-    @media (max-width:340px) {
+    /* 手機螢幕（小於 380px）減少邊距 */
+    @media (max-width:380px) {
       body {
         padding: 4px;
       }
@@ -135,7 +134,8 @@
       border: 1px solid rgba(255, 255, 255, 0.06);
       background: transparent;
       color: inherit;
-      min-width: 120px
+      min-width: 120px;
+      font-size: 15px;
     }
 
     .controls input[type=number] {
@@ -146,7 +146,8 @@
       border: 1px solid rgba(255, 255, 255, 0.06);
       background: transparent;
       color: inherit;
-      min-width: 120px
+      min-width: 120px;
+      font-size: 15px;
     }
 
     .stats {
@@ -255,7 +256,7 @@
     }
 
     .center .big {
-      font-size: 26px;
+      font-size: 38px;
       font-weight: 800
     }
 
@@ -507,9 +508,11 @@
     function setBodyHeightToContent() {
       const wrapper = document.querySelector('.card-wrapper');
       if (!wrapper) return;
-      const h = wrapper.offsetHeight + 40; // add some padding
-      document.body.style.height = h + 'px';
-      document.documentElement.style.height = h + 'px';
+      const h = wrapper.offsetHeight + 14; // add some padding
+      // 只在 iframe 裡面改高度
+      if (window !== window.parent) {
+        document.documentElement.style.height = h + 'px';
+      }
     }
     // schedule with rAF to avoid repeated layout thrashing
     let scheduleTimer = null;
