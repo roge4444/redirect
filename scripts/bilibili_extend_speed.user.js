@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         bilibili_extend_speed
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @license      GPL-3.0
 // @description  哔哩哔哩1.75-8倍速播放 bilibilin倍速播放 哔哩哔哩播放 bilibibli播放 哔哩哔哩加速播放
 // @author       Roger Chu
+// @include      *://www.bilibili.com/cheese/*
 // @include      *://www.bilibili.com/video/av*
 // @include      *://www.bilibili.com/video/BV*
 // @include      *://www.bilibili.com/bangumi/play/ep*
