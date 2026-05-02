@@ -1,6 +1,6 @@
-game_script_jeff/* !filter !diff !merge text
-*.apk filter=lfs diff=lfs merge=lfs -text
-int_arc_pw.zip filter=lfs diff=lfs merge=lfs -text
-LGS_9.04.49_x64.zip filter=lfs diff=lfs merge=lfs -text
-LenovoCompanion_10.2506.11.0.zip filter=lfs diff=lfs merge=lfs -text
-le_drive_20251110.zip filter=lfs diff=lfs merge=lfs -text
+# game_script_jeff/* !filter !diff !merge text
+# *.apk filter=lfs diff=lfs merge=lfs -text
+# int_arc_pw.zip filter=lfs diff=lfs merge=lfs -text
+# LGS_9.04.49_x64.zip filter=lfs diff=lfs merge=lfs -text
+# LenovoCompanion_10.2506.11.0.zip filter=lfs diff=lfs merge=lfs -text
+# le_drive_20251110.zip filter=lfs diff=lfs merge=lfs -text
