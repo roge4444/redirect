@@ -1,8 +1,7 @@
 // ==UserScript==
-// @name         加速TW Bilibili(切換CDN) [Roger_Modified]
-// @copyright    Free For Personal Use
-// @license      No License
-// @version      1.0.0
+// @name         加速TW Bilibili(切換CDN) [Roger Modified]
+// @namespace    http://tampermonkey.net/
+// @version      1.0.1
 // @description  修改 Bilibili 播放時的所用CDN 加快影片載入 番劇加速 影片加速
 // @author       Roger Chu
 // @run-at       document-start

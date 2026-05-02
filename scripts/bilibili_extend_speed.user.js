@@ -1,9 +1,8 @@
 // ==UserScript==
-// @name         bilibili_extend_speed
+// @name         Bilibili 播放速度擴展(1.75x-8x) [Roger Modified]
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
-// @license      GPL-3.0
-// @description  哔哩哔哩1.75-8倍速播放 bilibilin倍速播放 哔哩哔哩播放 bilibibli播放 哔哩哔哩加速播放
+// @version      1.0.5
+// @description  Bilibili 1.75-8倍速播放 Bilibili 倍速播放
 // @author       Roger Chu
 // @include      *://www.bilibili.com/cheese/*
 // @include      *://www.bilibili.com/video/av*
@@ -60,9 +59,9 @@ function my_sleep(ms) {
 
     var node2_0 = document.querySelector(".bpx-player-ctrl-playbackrate-menu-item[data-value='2']")
 
-    var texts = ['2.25x','2.5x','2.75x','3.0x','3.5x','4.0x','5.0x','6.0x','8.0x']
-    var data_values = ['2.25','2.5','2.75','3','3.5','4','5','6','8']
-    var speeds = [2.25,2.5,2.75,3,3.5,4,5,6,8]
+    var texts =       ['2.1x','2.15x','2.2x','2.25x','2.5x','2.75x','3.0x','4.0x','6.0x','8.0x']
+    var data_values = ['2.1', '2.15', '2.2', '2.25', '2.5', '2.75', '3',   '4',   '6',   '8']
+    var speeds =      [ 2.1,   2.15,   2.2,   2.25,   2.5,   2.75,   3,     4,     6,     8]
 
     // 新增 DOMs
     for (let i = (data_values.length - 1); i >= 0; i--) {

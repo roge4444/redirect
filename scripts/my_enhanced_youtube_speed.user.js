@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         My Enhanced Youtube Speed
+// @name         Youtube 播放速度擴展(2x-10x) [Roger Modified]
 // @namespace    http://tampermonkey.net/
-// @version      1.1.0
-// @description  My Enhanced Youtube Speed
+// @version      1.2.0
+// @description  Youtube 2-10倍速播放 Youtube 倍速播放
 // @author       Roger Chu
 // @match        https://www.youtube.com/*
 // @grant        none
